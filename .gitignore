@@ -1,3 +1,11 @@
+# Ignore auxiliary LaTeX files
+*.aux
+*.log
+*.out
+
+# Ignore main LaTeX output
+data-structures-algorithms-databases.pdf
+
 # Ignore miscellaneous work folders
 _resources/
 quizzes/
