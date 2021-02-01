@@ -19,9 +19,14 @@
 \renewcommand{\familydefault}{\sfdefault}
 
 \usepackage{booktabs} % Publication quality tables in LaTeX
+\usepackage[labelfont=bf,labelsep=period]{caption}[2018/05/01] % Customising captions in floating environments
+\usepackage[inline,shortlabels]{enumitem} % Control layout of itemize enumerate description
 \usepackage[skip=\glueexpr\baselineskip\relax]{parskip} % Layout with zero \parindent non-zero \parskip
 \usepackage[onehalfspacing]{setspace} % Set space between lines % setspace must be loaded before hyperref
 \usepackage{sfmath} % Sans-serif mathematics
+
+% Set list parameters (using enumitem package)
+\setlist{nosep}
 
 % Increase penalty for widows and orphans (maximum 10000)
 \widowpenalty = 10000
