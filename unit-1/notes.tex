@@ -88,18 +88,27 @@ The relationship between two entities is written on a line connecting them.
 The relationship is usually a verb.
 Thus, ERDs correspond to natural language.
 
-Relationships are named associations between entities.
-Relationships provide associations in both directions.
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{unit-1/figures/er-diagram.jpg}
+  \caption*{An entity relationship diagram.}
+\end{figure}
 
 The attributes of an entity are listed within its rectangle.
 The primary key is underlined.
+
+Relationships are named associations between entities.
+Relationships provide associations in both directions.
 
 \subsubsection{Cardinality}
 
 \emph{Cardinality} provides a constraint on the number of instances of an entity that participate in a relationship.
 
-% include cardinality key
-% include example
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{unit-1/figures/cardinality-notation.jpg}
+  \caption*{Cardinality notation.}
+\end{figure}
 
 \begin{table}[htp]
   \centering
@@ -130,7 +139,11 @@ Weak~entities are represented by rounded rectangles.
 An underlined attribute of a weak~entity is not its primary key.
 It is a key that is combined with the keys of one or more entities to provide a primary key.
 
-% include example
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{unit-1/figures/weak-entity.jpg}
+  \caption*{A weak entity relationship.}
+\end{figure}
 
 An \emph{identification relationship} provides one component of the primary key of a weak entity.
 An \emph{identifying dependency} consists of one or more identification relationships that provide all of the primary key.
@@ -141,11 +154,19 @@ Sometimes an identification relationship and an identifying dependency are equiv
 In a many-to-many relationship, the relationship itself can have attributes.
 Theses attributes are listed below the relationship with an arrow pointing to them.
 
-% include example
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.75\textwidth]{unit-1/figures/relationship-attribute.jpg}
+  \caption*{An attribute of a many-to-many relationship.}
+\end{figure}
 
 A many-to-many relationship can be replaced by an associate entity and two one-to-many relationships.
 
-% include example
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=\textwidth]{unit-1/figures/associate-entity.jpg}
+  \caption*{An associate entity in a many-to-many relationship.}
+\end{figure}
 
 An associate entity provides additional information about the many-to-many relationship it implements.
 By necessity, an associate entity is a weak entity that borrows the attributes of its primary~key from the entities between which it provides an association.
@@ -157,13 +178,21 @@ For example, a module may be taught by multiple lecturers, and a student is give
 If it is only necessary to relate pairs of entities, such as which lecturers teach which modules, or which students are enrolled in which modules, an \( N \)-way relationship is not required.
 If, however, it is necessary to store information associated with more than two entities, such as the mark given to a student from a lecturer for one section of a module, an \( N \)-way relationship is required.
 
-% include example
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=\textwidth]{unit-1/figures/n-way-relationship.jpg}
+  \caption*{An \( N \)-way relationship.}
+\end{figure}
 
 \subsubsection{Self-Identifying Relationships}
 
 A \emph{self-identifying} (also \emph{self-referencing} or \emph{reflexive}) relationship is a relationship between an entity and itself.
 
-% include example
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.4\textwidth]{unit-1/figures/self-identifying-relationship.jpg}
+  \caption*{A self-identifying relationship.}
+\end{figure}
 
 All hierarchies are self-identifying relationships.
 \begin{itemize}
@@ -174,7 +203,11 @@ All hierarchies are self-identifying relationships.
 
 In order to determine the cardinality of a self-identifying relationship, it is useful to draw an \emph{instance~diagram}.
 
-% include example
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.3\textwidth]{unit-1/figures/instance-diagram.jpg}
+  \caption*{An instance diagram of a self-identifying relationship.}
+\end{figure}
 
 A self-identifying relationship may require an associate entity, depending on its cardinality.
 All self-identifying relationships can be translated to tables if many-to-many relationships are replaced by associate entities and one-to-many relationships.
