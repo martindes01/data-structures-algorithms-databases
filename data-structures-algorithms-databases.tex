@@ -18,16 +18,20 @@
 % Set default font family to default sans-serif font
 \renewcommand{\familydefault}{\sfdefault}
 
+\usepackage{amsmath} % AMS mathematical facilities for LaTeX
+\usepackage{amssymb} % TeX fonts from the American Mathematical Society
 \usepackage{booktabs} % Publication quality tables in LaTeX
 \usepackage[labelfont=bf,labelsep=period]{caption}[2018/05/01] % Customising captions in floating environments
 \usepackage[inline,shortlabels]{enumitem} % Control layout of itemize enumerate description
 \usepackage{graphicx} % Enhanced support for graphics
 \usepackage[skip=\glueexpr\baselineskip\relax]{parskip} % Layout with zero \parindent non-zero \parskip
 \usepackage[onehalfspacing]{setspace} % Set space between lines % setspace must be loaded before hyperref
-\usepackage{sfmath} % Sans-serif mathematics
 
 % Set list parameters (using enumitem package)
 \setlist{nosep}
+
+% Define command for improved overline in italic setting
+\newcommand{\itol}[2][3]{{}\mkern#1mu\overline{\mkern-#1mu#2}}
 
 % Increase penalty for widows and orphans (maximum 10000)
 \widowpenalty = 10000
