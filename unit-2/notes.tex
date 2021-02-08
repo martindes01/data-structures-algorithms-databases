@@ -1,0 +1,197 @@
+\subsection{Relational Design by Decomposition}
+
+In its simplest form, all data could be stored in one large table with several columns.
+The problem with this is that
+\begin{itemize}
+  \item the redundancy in repeated data will lead to a tremendous waste of space, and
+  \item the throughput and availability of the data is diminished by the size of the table.
+\end{itemize}
+
+Instead, the large table is \emph{decomposed} into several smaller tables.
+
+\subsection{Functional Dependency Notation}
+
+\emph{Functional~dependencies} are a generalisation of keys.
+The functional dependencies of a relation are based on knowledge of the real world.
+All instances of the relation must adhere to its functional dependencies.
+
+\begin{table}[htp]
+  \centering
+  \caption*{Attributes of the \emph{students} relation.}
+  \begin{tabular}{llllllll}
+    \toprule
+    sID & sName & sAddress & fdUniCode & fdUniName & fdUniCity & fdUniMark & fdGrade \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Suppose that the `fdGrade' attribute of the students relation is based on the corresponding `fdMark'.
+For example, a mark of 70 may map to a grade of A, and a mark of 60 may map to a grade of B\@.
+It can be said that `fdGrade' is \emph{functionally~determined} by `fdMark', or `fdMark' \emph{functionally~determines} `fdGrade'.
+In other words, any two tuples with the same `fdMark' must have the same `fdGrade'.
+\begin{equation*}
+  \text{fdMark} \rightarrow \text{fdGrade}
+\end{equation*}
+
+For every pair of tuples \( t \) and \( u \) that are elements of the student relation, the equality of the `fdMark' of both tuples implies the equality of the `fdGrade' of both tuples.
+\begin{equation*}
+  \forall\ t,u \in \text{students}: \quad t.\text{fdMark} = u.\text{fdMark} \implies t.\text{fdGrade} = u.\text{fdGrade}
+\end{equation*}
+
+In general, the functional dependency by which a set of attributes \( \itol{A} = \left\{ a_1, a_2, \ldots, a_m \right\} \) functionally determines a set of attributes \( \itol{B} = \left\{ b_1, b_2, \ldots, b_n \right\} \) in a relation \( R \) is defined as
+\begin{equation*}
+  \itol{A} \rightarrow \itol{B}
+\end{equation*}
+\begin{equation*}
+  \forall\ t,u \in R: \quad t.\itol{A} = u.\itol{A} \implies t.\itol{B} = u.\itol{B}
+\end{equation*}
+
+\subsection{Interpreting Functional Dependencies}
+
+The student~ID uniquely identifies a student; no two students can have the same ID\@.
+\begin{equation*}
+  \text{sID} \rightarrow \text{sName}
+\end{equation*}
+
+The student~ID uniquely identifies the registered address; a student cannot be registered under two addresses.
+\begin{equation*}
+  \text{sID} \rightarrow \text{sAddress}
+\end{equation*}
+
+The first~degree university~code uniquely identifies the name and city of the university; no two universities can have the same university~code.
+\begin{equation*}
+  \text{fdUniCode} \rightarrow \text{fdUniName}, \text{fdUniCity}
+\end{equation*}
+
+The name and city of a university uniquely identifies the university; no two universities in the same city can have the same name.
+\begin{equation*}
+  \text{fdUniName}, \text{fdUniCity} \rightarrow \text{fdUniCode}
+\end{equation*}
+
+The student~ID uniquely identifies the first~degree mark of the student with that ID; a student can only have one first~degree mark.
+\begin{equation*}
+  \text{sID} \rightarrow \text{fdMark}
+\end{equation*}
+
+The first~degree mark determines the first~degree grade; any two students with the same mark must have the same grade.
+\begin{equation*}
+  \text{fdMark} \rightarrow \text{fdGrade}
+\end{equation*}
+
+The student~ID uniquely identifies the first~degree grade of the student with that ID; a student can only have one first~degree grade.
+\begin{equation*}
+  \text{sID} \rightarrow \text{fdGrade}
+\end{equation*}
+
+\subsection{Functional Dependencies and Keys}
+
+A key is a set of attributes that uniquely identifies a tuple.
+If a set of attributes \( \itol{A} \) functionally determines all attributes of a relation \( R \) with no duplicates, then \( \itol{A} \) is a key of \( R \)\@.
+
+\subsection{Types of Functional Dependency}
+
+\subsubsection{Trivial Dependencies}
+
+A functional dependency \( \itol{A} \rightarrow \itol{B} \) is said to be a \emph{trivial} functional dependency if \( \itol{B} \) is a subset of \( \itol{A} \).
+\begin{equation*}
+  \itol{A} \rightarrow \itol{B} \quad \text{is trivial if} \quad \itol{B} \subseteq \itol{A}
+\end{equation*}
+
+\subsubsection{Non-Trivial Dependencies}
+
+A functional dependency \( \itol{A} \rightarrow \itol{B} \) is said to be a \emph{non-trivial} functional dependency if \( \itol{B} \) is \emph{not} a subset of \( \itol{A} \)\@.
+\begin{equation*}
+  \itol{A} \rightarrow \itol{B} \quad \text{is non-trivial if} \quad \itol{B} \nsubseteq \itol{A}
+\end{equation*}
+
+\subsubsection{Completely Non-Trivial Dependencies}
+
+A functional dependency \( \itol{A} \rightarrow \itol{B} \) is said to be a \emph{completely non-trivial} functional dependency if \( \itol{A} \) and \( \itol{B} \) are disjoint, i.e.\ they share no common attributes --- their intersection is the empty set \( \varnothing \).
+\begin{equation*}
+  \itol{A} \rightarrow \itol{B} \quad \text{is completely non-trivial if} \quad \itol{A} \cap \itol{B} = \varnothing
+\end{equation*}
+
+\subsection{Rules of Functional Dependencies}
+
+\subsubsection{The Splitting Rule}
+
+The \emph{splitting rule} states that if
+\begin{equation*}
+  \itol{A} \rightarrow b_1, b_2, \ldots, b_n
+\end{equation*}
+then it follows that
+\begin{equation*}
+  \itol{A} \rightarrow b_1, \quad \itol{A} \rightarrow b_2, \quad \ldots, \quad \itol{A} \rightarrow b_n
+\end{equation*}
+
+\subsubsection{The Combining Rule}
+
+The \emph{combining rule} states that if
+\begin{equation*}
+  \itol{A} \rightarrow b_1, \quad \itol{A} \rightarrow b_2, \quad \ldots, \quad \itol{A} \rightarrow b_n
+\end{equation*}
+then it follows that
+\begin{equation*}
+  \itol{A} \rightarrow b_1, b_2, \ldots, b_n
+\end{equation*}
+
+\subsubsection{The Transitive Rule}
+
+The \emph{transitive rule} states that if
+\begin{equation*}
+  \itol{A} \rightarrow \itol{B} \quad \text{and} \quad \itol{B} \rightarrow \itol{C}
+\end{equation*}
+then it follows that
+\begin{equation*}
+  \itol{A} \rightarrow \itol{C}
+\end{equation*}
+
+\subsubsection{Trivial Dependency Rules}
+
+If \( \itol{A} \rightarrow \itol{B} \) is a trivial dependency, then \( \itol{A} \) functionally determines the union of \( \itol{A} \) and \( \itol{B} \)\@.
+\begin{equation*}
+  \itol{B} \subseteq \itol{A} \implies \itol{A} \rightarrow \itol{A} \cup \itol{B}
+\end{equation*}
+
+If \( \itol{A} \rightarrow \itol{B} \) is a trivial dependency, then \( \itol{A} \) functionally determines the intersection of \( \itol{A} \) and \( \itol{B} \).
+\begin{equation*}
+  \itol{B} \subseteq \itol{A} \implies \itol{A} \rightarrow \itol{A} \cap \itol{B}
+\end{equation*}
+
+\subsection{Closure of Attributes}
+
+The closure of a set of attributes \( \itol{A} \) in a relation is the set of all attributes \( \itol{B} \) such that \( \itol{A} \rightarrow \itol{B} \)\@.
+The closure of \( \itol{A} \) is denoted by \( \itol{A}^{+} \)\@.
+Since \( \itol{A} \) is a subset of itself, the closure of \( \itol{A} \) contains \( \itol{A} \)\@.
+\begin{equation*}
+  \itol{A} \subseteq \itol{A} \quad \therefore \quad \itol{A}^{+} \supseteq \itol{A}
+\end{equation*}
+
+In order to determine the closure of \( \itol{A} \),
+\begin{enumerate}
+  \item define a result set \( \itol{A}^{+} \) that initially contains all attributes of \( \itol{A} \), then
+  \item repeating until there is no further change,
+  \begin{enumerate}
+    \item for all the (remaining) functional dependencies of the form \( \itol{X} \rightarrow \itol{Y} \),
+    \begin{enumerate}
+      \item if \( \itol{X} \) is a subset of the result set \( \itol{A}^{+} \),
+      \begin{enumerate}
+        \item add \( \itol{Y} \) to the result set \( \itol{A}^{+} \), and
+        \item remove the functional dependency from the list of functional dependencies that remain to be considered.
+      \end{enumerate}
+    \end{enumerate}
+  \end{enumerate}
+  \item Finally, the result set \( \itol{A}^{+} \) should be the closure of \( \itol{A} \)\@.
+\end{enumerate}
+
+\subsection{Closure, Keys and Decomposition}
+
+To check whether \( \itol{A} \) is a key of a relation \( R \), it is necessary to compute the closure of \( \itol{A} \)\@.
+If the closure contains all attributes of \( R \), then \( \itol{A} \) is a key of \( R \)\@.
+
+In general, to find all the keys for a relation \( R \), it is necessary to compute the closure of each and every subset \( \itol{A} \) of the attributes of \( R \)\@.
+If the closure of the subset \( \itol{A} \) contains all attributes of \( R \), then \( \itol{A} \) is a key of \( R \)\@.
+The problem can be simplified by noting that a superset of a key is itself a key.
+Therefore, if a key \( \itol{A} \) is found, all supersets of \( \itol{A} \) can be marked as keys without having to compute their closures.
+
+The purpose of decomposition is to find a minimal set of completely non-trivial functional dependencies such that all functional dependencies that hold on the original relation can be derived from this set.
