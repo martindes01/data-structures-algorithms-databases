@@ -2,7 +2,11 @@
 
 The \emph{natural~join} \( R \bowtie S \) of two relations \( R \) and \( S \) is the set of all combinations of the tuples of \( R \) and \( S \) whose common attributes are equal.
 
-% example
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{unit-3/figures/natural-join.jpg}
+  \caption*{The natural join of two relations.}
+\end{figure}
 
 \subsection{Decomposition of a Relation}
 
@@ -30,14 +34,18 @@ In order to decompose the relation \( R \),
   \item until all relations are in BCNF,
   \begin{enumerate}
     \item pick any of the problem relations \( R' \) with at least one functional dependency \( \itol{A} \rightarrow \itol{B} \) that violates BCNF (where \( \itol{A} \) is not a key),
-    \item decompose it into two relations \( R_1\left( \itol{A}, \itol{B} \right) \) and \( R_2\left( \itol{A}, \text{rest} \right) \) --- discarding the original relation \( R' \), then
+    \item decompose it into two relations \( R_1\!\left( \itol{A}, \itol{B} \right) \) and \( R_2\!\left( \itol{A}, \text{rest} \right) \) --- discarding the original relation \( R' \), then
     \item compute the functional dependencies of \( R'_1 \) and \( R'_2 \), and
     \item compute the keys of \( R'_1 \) and \( R'_2 \).
   \end{enumerate}
   \item Finally, the remaining relations \( R' \) are the decomposition of the original relation \( R \).
 \end{enumerate}
 
-% example
+\begin{figure}[htp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{unit-3/figures/decomposition.jpg}
+  \caption*{Decomposition of a relation \( R'\!\left( \itol{A}, \itol{B}, \text{rest} \right) \) into \( R'_1\!\left( \itol{A}, \itol{B} \right) \) and \( R'_2\!\left( \itol{A}, \text{rest} \right) \).}
+\end{figure}
 
 The natural join of the decomposed relations \( R' \) is the original relation \( R \), and the union of the attributes of all \( R' \) is the set of attributes of \( R \).
 
