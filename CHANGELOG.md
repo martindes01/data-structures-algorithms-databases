@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Notes for Unit 3: Boyce-Codd Normal Form (BCNF).
 
+### Changed
+
+- Start sections on a new page.
+
+### Fixed
+
+- Illegal token in PDF bookmark.
+
 ## [0.2.0] &ndash; 2021-02-08
 
 ### Added
