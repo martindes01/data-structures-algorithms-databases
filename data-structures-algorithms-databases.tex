@@ -26,11 +26,15 @@
 \usepackage{graphicx} % Enhanced support for graphics
 \usepackage[skip=\glueexpr\baselineskip\relax]{parskip} % Layout with zero \parindent non-zero \parskip
 \usepackage[onehalfspacing]{setspace} % Set space between lines % setspace must be loaded before hyperref
+\usepackage{titlesec} % Select alternative section titles
 
 \PassOptionsToPackage{hyphens}{url}\usepackage{hyperref} % Extensive support for hypertext in LaTeX % hyperref loaded by pdfx
 
 % Set list parameters (using enumitem package)
 \setlist{nosep}
+
+% Set section break command (using package titlesec)
+\newcommand{\sectionbreak}{\clearpage}
 
 % Define command for improved overline in italic setting
 \newcommand{\itol}[2][3]{{}\mkern#1mu\overline{\mkern-#1mu#2}}
