@@ -1,0 +1,222 @@
+\subsection{Background}
+
+A database is a collection of relations (tables).
+Relations consist of attributes (columns).
+Data consists of tuples (rows).
+A tuple has a value associated with each attribute.
+A key is a set of one or more attributes that is unique to each tuple in a relation.
+
+Each attribute has a domain (type) and every value has a type.
+There is a special value \texttt{NULL} (undefined) that is a member of all domains.
+
+The schema of a database includes the name, attributes and domains of every relation in the database.
+An \emph{instance} of a database comprises the contents of its relations at a given point in time.
+
+\emph{Relational algebra} is a formal language that underpins relational database query languages such as SQL\@.
+A \emph{query} operates on one or more relations and returns a relation.
+The simplest query in relational algebra is the name of a relation.
+This simply returns a copy of the relation.
+
+Relational algebra provides operators to
+\begin{itemize}
+  \item filter relations,
+  \item slice relations, and
+  \item combine relations.
+\end{itemize}
+
+\begin{table}[htp]
+  \centering
+  \caption*{The attributes of the \emph{students} relation.}
+  \begin{tabular}{llll}
+    \toprule
+    sID & sName & sFirstDegree & sFDMark \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[htp]
+  \centering
+  \caption*{The attributes of the \emph{modules} relation.}
+  \begin{tabular}{lll}
+    \toprule
+    mID & mName & mLecturer \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[htp]
+  \centering
+  \caption*{The attributes of the \emph{studentModules} relation.}
+  \begin{tabular}{llll}
+    \toprule
+    sID & mID & caMark & examMark \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Select Operation}
+
+The \emph{select} operation \( \sigma_{\phi}\,R \) returns a new relation that comprises all tuples of a relation \( R \) for which a certain propositional formula \( \phi \) holds.
+The propositional formula consists of atomic formulae and the logical operators \( \land \) (and), \( \lor \) (or) and \( \lnot \) (negation).
+
+For example,
+\begin{equation*}
+  \sigma_{\text{sID}\,>\,1\ \land\ \text{sFDMark}\,>\,77}\,\text{students}
+\end{equation*}
+is equivalent to the SQL~query
+\begin{lstlisting}[language={SQL}]
+SELECT * FROM students WHERE sID > 1 AND sFDMark > 77;
+\end{lstlisting}
+
+\subsection{Project Operator}
+
+The \emph{project} operation \( \pi_{a_1, \ldots, a_n}\,R \) returns a new relation that comprises all tuples of a relation \( R \) but with only a subset \( \left\{ a_1, \ldots, a_n \right\} \) of its attributes.
+
+For example,
+\begin{equation*}
+  \pi_{\text{sID},\,\text{examMark}}\,\text{studentModules}
+\end{equation*}
+is equivalent to the SQL~query
+\begin{lstlisting}[language={SQL}]
+SELECT sID, examMark FROM studentModules;
+\end{lstlisting}
+
+\subsection{Chaining Operations}
+
+Since these relational operations each act on a relation and return a relation, they can be chained.
+For example,
+\begin{equation*}
+  \pi_{\text{sID},\,\text{examMark}}\!\left( \sigma_{\text{examMark}\,>\,70}\,\text{studentModules} \right)
+\end{equation*}
+is equivalent to the SQL~query
+\begin{lstlisting}[language={SQL}]
+SELECT sID, examMark FROM (
+  SELECT * FROM studentModules WHERE examMark > 70
+);
+\end{lstlisting}
+
+It is important to note that SQL tables are multisets and, therefore, allow duplicate rows.
+Relations in relational algebra, however, are sets, and do not contain duplicate tuples.
+
+\subsection{Cross Product or Cartesian Product}
+
+The \emph{cross~product} or \emph{Cartesian~product} operator \( \times \) is used to combine two relations.
+The result is a relation whose attributes are the union of the attributes of the two relations, and whose tuples are the cross~product of the tuples of the two relations.
+\begin{equation*}
+  R \times S
+\end{equation*}
+
+As a notational requirement, if the same attribute name exists in both relations, each corresponding attribute in the result is prefixed by the name of its source relation.
+
+For example,
+\begin{equation*}
+  \text{students} \times \text{studentModules}
+\end{equation*}
+is equivalent to the SQL~query
+\begin{lstlisting}[language={SQL}]
+SELECT student.sID, sName, sFirstDegree, sFDMark,
+       studentModules.sID, mID, caMark, examMark
+FROM students, studentModules;
+\end{lstlisting}
+
+Typically, the cross~product is not useful unless it is filtered using a select operation.
+For example,
+\begin{equation*}
+  \sigma_{\text{students.sID}\,=\,\text{studentModules.sID}}\!\left( \text{students} \times \text{studentModules} \right)
+\end{equation*}
+is equivalent to the SQL~query
+\begin{lstlisting}[language={SQL}]
+SELECT student.sID, sName, sFirstDegree, sFDMark,
+       studentModules.sID mID, caMark, examMark
+FROM students, studentModules
+WHERE students.sID = studentModules.sID;
+\end{lstlisting}
+
+\subsection{Theta Join}
+
+The \emph{Theta~join} operator \( \bowtie_{\Theta} \) performs the cross~product of two relations and selects all tuples of the result that satisfy the predicate \( \Theta \).
+\begin{equation*}
+  R \bowtie_{\Theta} S \equiv \sigma_{\Theta}\!\left( R \times S \right)
+\end{equation*}
+\begin{lstlisting}[language={SQL}]
+SELECT * FROM R JOIN S ON <Theta>;
+\end{lstlisting}
+
+\subsection{Natural Join}
+
+The \emph{natural~join} operator \( \bowtie \) performs the cross~product of two relations and selects all tuples of the result where each pair of attributes with the same name have the same value.
+It then discards one attribute from each duplicate pair.
+\begin{equation*}
+  R \bowtie S \cong \sigma_{R.\itol{A}\,=\,S.\itol{A}}\!\left( R \times S \right)
+\end{equation*}
+
+For example,
+\begin{equation*}
+  \text{students} \bowtie \text{studentModules} \cong \sigma_{\text{students.sID}\,=\,\text{studentModules.sID}}\!\left( \text{students} \times \text{studentModules} \right)
+\end{equation*}
+is equivalent to the SQL~query
+\begin{lstlisting}[language={SQL}]
+SELECT * FROM students NATURAL JOIN studentModules;
+\end{lstlisting}
+
+The natural~join does not add expressive power to relational algebra since it can be expressed as a combination of projection, selection and cross~product.
+
+\subsection{Rename Operator}
+
+The \emph{rename} operation \( \rho_{S\left( b_1,\,\ldots,\,b_n \right)} R \) is used to rename a relation \( R \) and its attributes \( \left\{ a_1, \ldots, a_n \right\} \) to a relation \( S \) with attributes \( \left\{ b_1, \ldots, b_n \right\} \).
+
+For example,
+\begin{equation*}
+  \rho_{S\left( b_1,\,\ldots,\,b_n \right)} R
+\end{equation*}
+is equivalent to the SQL~query
+\begin{lstlisting}[language={SQL}]
+SELECT a1 AS b1, ..., an AS bn FROM R AS S;
+\end{lstlisting}
+
+A relation can can be renamed without renaming its attributes using the following shorthand notation.
+\begin{equation*}
+  \rho_{S}\,R
+\end{equation*}
+
+As long as a relation has more than one attribute, all of its attributes can be renamed without renaming the relation using the following shorthand notation.
+\begin{equation*}
+  \rho_{b_1,\,\ldots,\,b_n}\,R
+\end{equation*}
+
+The rename operator adds expressive power to relational algebra as it is required in order to refer to specific attributes of a relation formed by a self~join.
+
+\subsection{Self Join}
+
+A \emph{self~join} is any type of join (cross~product, Theta~join or natural~join) whose two operands are the same relation.
+In order to refer to specific attributes of a relation formed by a self~join, it is necessary to create renamed copies of the original relation before joining.
+
+For example, a relation that describes pairs of modules taught by the same lecturer can be formed as follows.
+The select operation discards tuples in which both modules are the same (\( \text{M1.mName} = \text{M2.mName} \)) or are reversed (\( \text{M1.mName} > \text{M2.mName} \)).
+\begin{equation*}
+  \begin{split}
+    & \pi_{\text{M1.mName},\,\text{M2.mName}}\!\left(\right. \\
+    & \quad \sigma_{\text{M1.mName}\,<\,\text{M2.mName}}\!\left(\right. \\
+    & \quad \quad \rho_{\text{M1}\left( \text{M1.mID},\,\text{M1.mName},\,\text{mLecturer} \right)} \text{modules} \\
+    & \quad \quad \quad \bowtie \\
+    & \quad \quad \rho_{\text{M2}\left( \text{M2.mID},\,\text{M2.mName},\,\text{mLecturer} \right)} \text{modules} \\
+    & \quad \left.\right) \\
+    & \left.\right)
+  \end{split}
+\end{equation*}
+
+\subsection{Set Operators}
+
+The basic set operators are \emph{union} \( \cup \), \emph{difference} \( - \) and \emph{intersection} \( \cap \).
+In relational algebra, these operators may only be applied to relations of the same schema.
+In order to find the union of student names (`sName') and module names (`mName'), for example, it is necessary first to project only these attributes from their respective relations, and to give the attributes the same name.
+
+The intersection operator does not add expressive power to relation algebra, as an intersection can be expressed as a combination of differences.
+\begin{equation*}
+  A \cap B \equiv A - \left( A - B \right)
+\end{equation*}
+
+Assuming two relations are of the same schema, their intersection is equivalent to their natural~join.
+\begin{equation*}
+  A \cap B \equiv A \bowtie B
+\end{equation*}
