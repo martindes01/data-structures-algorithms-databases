@@ -18,12 +18,16 @@
 % Set default font family to default sans-serif font
 \renewcommand{\familydefault}{\sfdefault}
 
+% Set default teletype font to Latin Modern Teletype
+\renewcommand{\ttdefault}{lmtt}
+
 \usepackage{amsmath} % AMS mathematical facilities for LaTeX
 \usepackage{amssymb} % TeX fonts from the American Mathematical Society
 \usepackage{booktabs} % Publication quality tables in LaTeX
 \usepackage[labelfont=bf,labelsep=period]{caption}[2018/05/01] % Customising captions in floating environments
 \usepackage[inline,shortlabels]{enumitem} % Control layout of itemize enumerate description
 \usepackage{graphicx} % Enhanced support for graphics
+\usepackage{listings} % Typeset source code listings using LaTeX
 \usepackage[skip=\glueexpr\baselineskip\relax]{parskip} % Layout with zero \parindent non-zero \parskip
 \usepackage[onehalfspacing]{setspace} % Set space between lines % setspace must be loaded before hyperref
 \usepackage{titlesec} % Select alternative section titles
@@ -32,6 +36,17 @@
 
 % Set list parameters (using enumitem package)
 \setlist{nosep}
+
+% Load languages for listings (using package listings)
+\lstloadlanguages{
+  SQL,
+}
+
+% Set listing parameters (using listings package)
+\lstset{
+  basicstyle = \ttfamily\fontseries{l}\selectfont,
+  keywordstyle = \ttfamily\fontseries{b}\selectfont,
+}
 
 % Set section break command (using package titlesec)
 \newcommand{\sectionbreak}{\clearpage}
