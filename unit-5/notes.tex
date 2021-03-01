@@ -1,0 +1,140 @@
+\subsection{Data Redundancy}
+
+A relation is in \emph{first normal form} if each of its attributes holds only a single value for each tuple.
+An attribute of a tuple may not hold an array or list of values, such as a string of comma-separated values.
+
+A relation is in Boyce-Codd Normal Form (BCNF) if the set of dependent attributes of each of its functional dependencies is a key.
+BCNF ensures that decomposed tables can be joined without loss of information, and that there is no redundancy in data.
+
+While a policy of no redundancy is good for minimising the storage size of a database, it is not necessarily the best solution.
+For example, data that are frequently accessed together may be split across multiple decomposed tables.
+A join would be required every time these data are accessed.
+This leads to
+\begin{itemize}
+  \item more complex queries and, therefore, a greater chance of an error that causes an incorrect result, and
+  \item additional load on the system in order to perform the join.
+\end{itemize}
+Clearly, it is useful for some relations to include data redundancy so as to ensure that data frequently accessed together are available in the same table.
+A compromise must be made between minimal storage size and minimal computation.
+
+\subsection{Indices}
+
+An \emph{index} is a persistent data structure that is used to improve the performance of a database management system (DBMS) when accessing tuples with a particular attribute value.
+An index groups subsets of tuples in a relation according to a property of one of its attributes.
+For example, tuples could be grouped according to the first character in an attribute `firstName'.
+This increases the speed of data access, as only a subset of the tuples need to be searched for a particular value.
+
+The author of a query does not need to use an index directly.
+The query processor of the DBMS will automatically use an available index when appropriate.
+
+An index can be created for any attribute in a database.
+The creation of an index is computationally expensive, so only frequently queried attributes should be indexed.
+Typically, an index is created as soon as sufficient queries have been made in order to determine the critical attributes.
+Updating an index when a tuple is added to a relation is also computationally expensive.
+Hence, indices are not created for highly dynamic tables.
+An attribute is suitable for indexing if it appears often in \texttt{WHERE} or \texttt{JOIN ON} clauses.
+It is possible to create a single index for multiple attributes that are compared in different ways.
+
+The data structure used to implement an index is dependent on the type of attribute and the type of comparison made on it.
+The two main data structures used as indices are \emph{hash~tables} and \emph{balanced~trees} (\emph{B-trees}).
+A hash~table can only index attributes that are compared via equality, and can be searched in constant time \( \mathrm{O}\!\left( 1 \right) \).
+A B-tree is used to index attributes that are compared via inequality relations (greater than or less than), and can be searched in logarithmic time \( \mathrm{O}\!\left( \log n \right) \).
+Without an index, a relation can be searched in linear time \( \mathrm{O}\!\left( n \right) \).
+
+Many DBMSs automatically create indices for primary keys.
+It is assumed that the primary key will be used frequently in filter and join conditions.
+Some DBMSs create indices for attributes that take unique values.
+In order to improve the performance of a frequent join, the joined attributes of both relations must be indexed.
+
+An index implicitly provides values of its attribute in sorted order, as this is useful for merge operations.
+Attributes that are frequently sorted are suitable for indexing.
+
+\subsection{Transactions}
+
+\subsubsection{Consistency and Fault Tolerance}
+
+\emph{Transactions} provide \emph{consistency} and \emph{fault tolerance} for database operations.
+Consistency includes the enforcement of business constraints on data.
+Fault tolerance includes limiting the extent of data loss when a failure occurs and avoiding irreparable damage to data.
+
+There are many layers of data access in a database application.
+A user calls upon an application for some data.
+The application calls upon methods of the DBMS for the data.
+The DBMS directly accesses the data to be returned.
+
+All database statements are transactions.
+Statements can be grouped to run as a transaction.
+A transaction is executed either completely or not at all.
+
+Transactions maintain the properties of \emph{isolation}, \emph{durability}, \emph{atomicity} and \emph{consistency}.
+These properties are collectively known as \emph{ACID} and ensure that a system is both fault tolerant and consistent in terms of the operation of its transactions and its business requirements.
+
+\subsubsection{Isolation}
+
+\emph{Isolation} allows multiple clients working concurrently on a database to assume that they are the only client operating on the data.
+A client does not have to worry about the operations performed by other clients.
+
+Isolation is implemented using \emph{serialisability}.
+Serialisable transactions may be interleaved so long as the end result would be equivalent to \emph{some} sequential execution of those transactions.
+Serialisability does not guarantee that the result of interleaved transactions will be equivalent to a \emph{specific} order of execution.
+
+\subsubsection{Durability}
+
+\emph{Durability} ensures that if a failure occurs after the completion of a commit, the results and availability of previous transactions will not be affected.
+Durability makes no guarantees on the state of changes made after the commit.
+
+Durability is implemented using a log of all changes to the data.
+This enables changes to be replayed over the original data in order to restore to any point in committed history.
+For safety, the log must be stored separately from the data.
+
+\subsubsection{Atomicity}
+
+\emph{Atomicity} ensures that if a failure occurs before a commit is made, all transactions that were issued since the last commit are executed either in full or not at all.
+No transaction is left partially executed due to a failure.
+This is also implemented using  a log of all changes to the data.
+
+The changes made by transactions that did not complete before the failure are undone via a \emph{rollback}.
+A rollback can also be initiated by a client.
+
+Transactions are usually \emph{blocking}, except in the case of interleaved serialisable transactions.
+This means that when one transaction is working on a particular table, another transaction cannot work on that table.
+
+Operations should not be placed in the same transaction unless they must happen together or in a particular order.
+A wait for user input should never occur in a transaction.
+
+\subsubsection{Consistency}
+
+Isolation, durability and atomicity already provide a form of consistency in that statements that should occur together may be placed in a serialisable transaction that is executed either completely or not at all, and that committed changes are not affected by failure.
+
+Consistency in terms of the ACID properties refers to the real-world consistency that determines the integrity of the data.
+This includes the enforcement of business rules via integrity checks, such as not allowing a transaction that causes an overdrawn bank balance to exceed a certain limit.
+
+Each transaction can assume that its constrains hold when it begins.
+As long as the transaction can guarantee that its constraints hold when it ends, the exact operations performed by the transaction do not matter.
+Thus, it can be said that serialisability both enables isolation and reduces the frequency of required consistency checks, as the checks need only be performed at the end of a transaction, rather than after every statement.
+
+\subsection{Client-Server Database Applications}
+
+At one point, some websites offered applications that would have to be downloaded in order to interact with complex data stored on the website.
+These applications were installed and run locally, with access to the computational resources of the local machine.
+
+Later, the more sophisticated approach of \emph{applets} was introduced.
+Applets require minimal installation and run in the browser on the local machine, making use of its computational resources.
+Applets are downloaded from a server to provide a better experience or to provide access to complex data.
+However, there are issues when it comes to manipulating local or remote data, as it is difficult to authenticate the true source of data and commands.
+
+Nowadays, the \emph{client-server} architecture is the most prevalent architecture for access to online resources.
+A \emph{client} is a user of services, and a \emph{server} is a provider of services.
+A user interacts with a client application, which in turn sends or requests relevant information to or from the server.
+The server processes the information and interacts with the database via a database server to access or store the relevant data.
+
+In order to design an application that makes use of a DBMS, it is necessary to
+\begin{itemize}
+  \item understand the business requirements of the system,
+  \item create entity relationship diagrams,
+  \item decompose relations by finding the minimal set of functional dependencies based on the business requirements,
+  \item list the integrity constraints that will ensure the consistency of the data,
+  \item create tables on which the constraints are maintained,
+  \item create indices for the most frequently queried attributes, and
+  \item create an application that uses SQL to create, retrieve and update data in the tables.
+\end{itemize}
