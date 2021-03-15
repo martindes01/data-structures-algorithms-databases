@@ -39,6 +39,7 @@
 
 % Load languages for listings (using package listings)
 \lstloadlanguages{
+  Java,
   SQL,
 }
 
@@ -50,6 +51,9 @@
 
 % Set section break command (using package titlesec)
 \newcommand{\sectionbreak}{\clearpage}
+
+% Define command for big-O notation
+\newcommand{\bigo}[1]{O\!\left(#1\right)}
 
 % Define command for improved overline in italic setting
 \newcommand{\itol}[2][3]{{}\mkern#1mu\overline{\mkern-#1mu#2}}
@@ -77,6 +81,7 @@
     3 & 3 & Boyce-Codd Normal Form (BCNF) \\
     4 & 4 & Relational Algebra \\
     5 & 5 & Database Application Design \\
+    7 & 6 & Linear and Binary Search \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -102,5 +107,8 @@
 
 \section{Database Application Design}
 \input{unit-5/notes.tex}
+
+\section{Linear and Binary Search}
+\input{unit-6/notes.tex}
 
 \end{document}
