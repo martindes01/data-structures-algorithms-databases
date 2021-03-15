@@ -39,6 +39,7 @@
 
 % Load languages for listings (using package listings)
 \lstloadlanguages{
+  Java,
   SQL,
 }
 
@@ -50,6 +51,9 @@
 
 % Set section break command (using package titlesec)
 \newcommand{\sectionbreak}{\clearpage}
+
+% Define command for big-O notation
+\newcommand{\bigo}[1]{O\!\left(#1\right)}
 
 % Define command for improved overline in italic setting
 \newcommand{\itol}[2][3]{{}\mkern#1mu\overline{\mkern-#1mu#2}}
