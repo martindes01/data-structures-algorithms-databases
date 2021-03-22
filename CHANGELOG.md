@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Notes for Unit 7: Binary Search Trees.
+- Statement of average time complexity for binary search in notes for Unit 6.
+- Descriptions for assertion, precondition, postcondition and invariant in notes for Unit 6.
 
 ## [0.6.0] &ndash; 2021-03-15
 
