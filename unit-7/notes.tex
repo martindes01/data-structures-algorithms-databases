@@ -31,8 +31,15 @@ The fundamental rules for building a binary~tree are as follows.
 \begin{enumerate}
   \item It is possible to have an empty~tree, denoted by \texttt{Empty} or \( \square \).
   \item Given a label \texttt{x} and two trees, \texttt{left} and \texttt{right}, a new tree \texttt{Fork(x, left, right)} can be built with \texttt{left} and \texttt{right} as the left and right subtrees, respectively, of a \emph{root} node with label \texttt{x}.
-  % example diagram
 \end{enumerate}
+\begin{figure}[!htp]
+  \centering
+  \begin{forest}
+    [\texttt{x}
+      [\texttt{left}, subtree]
+      [\texttt{right}, subtree]]
+  \end{forest}
+\end{figure}
 Thus, all binary~trees can be built using only the empty~tree \( \square \) and the fork tree \texttt{Fork}.
 
 The \emph{size} of a tree is the number of non-empty nodes it contains.
