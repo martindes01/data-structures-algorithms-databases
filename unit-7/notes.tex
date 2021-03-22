@@ -1,0 +1,215 @@
+\subsection{Manipulation of a Sorted Array}
+
+To delete an element from a sorted array
+\begin{enumerate}
+  \item find the element to be deleted --- \( \bigo{\log n} \) time complexity (efficient), and
+  \item shift the following elements left --- \( \bigo{n} \) time complexity (inefficient).
+\end{enumerate}
+Thus, deleting an element from a sorted array has \( \bigo{n} \) time complexity in both the worst case and on average.
+
+To insert an element into a sorted array
+\begin{enumerate}
+  \item find the position for insertion --- \( \bigo{\log n} \) time complexity (efficient), and, before insertion,
+  \item shift the following elements right --- \( \bigo{n} \) time complexity (inefficient).
+\end{enumerate}
+Thus, inserting an element into a sorted array has \( \bigo{n} \) time complexity in both the worst case and on average.
+It also has the added complexity of having to check the capacity of the array.
+
+Although it is efficient to find elements in a sorted array using binary~search, it is not efficient to insert into, or delete from, a sorted array.
+Alternative data structures, such as \emph{sorted~trees} should be considered for applications that require frequent insertion and deletion.
+
+\subsection{Binary Tree}
+
+A \emph{binary~tree} is a data structure whose elements, or \emph{nodes} each have two \emph{subtrees}.
+A subtree may be an empty tree.
+A node whose subtrees are both empty is a \emph{leaf~node}.
+Each non-empty node of a binary~tree has a label that represents the value of an element.
+An element can be of any data~type.
+All elements in a tree have the same type.
+
+The fundamental rules for building a binary~tree are as follows.
+\begin{enumerate}
+  \item It is possible to have an empty~tree, denoted by \texttt{Empty} or \( \square \).
+  \item Given a label \texttt{x} and two trees, \texttt{left} and \texttt{right}, a new tree \texttt{Fork(x, left, right)} can be built with \texttt{left} and \texttt{right} as the left and right subtrees, respectively, of a \emph{root} node with label \texttt{x}.
+  % example diagram
+\end{enumerate}
+Thus, all binary~trees can be built using only the empty~tree \( \square \) and the fork tree \texttt{Fork}.
+
+The \emph{size} of a tree is the number of non-empty nodes it contains.
+The \emph{height} of a tree is the maximum number of edges needed to reach an empty subtree from the root.
+Formulae for the size and height of a binary~tree can be defined as follows.
+\begin{lstlisting}[mathescape=true]
+#nodes($ \square $) = 0
+#nodes(Fork(x, left, right))
+    = 1 + #nodes(left) + #nodes(right)
+
+height($ \square $) = 0
+height(Fork(x, left, right))
+    = 1 + max(height(left), height(right))
+\end{lstlisting}
+
+\subsection{Perfectly Balanced Binary Tree}
+
+A binary~tree is \emph{perfectly balanced} if the left and right subtrees of any node have the same height.
+\begin{lstlisting}[mathescape=true]
+isPB($ \square $) = true
+isPB(Fork(x, left, right))
+    = (height(left) == height(right))
+      && isPB(left)
+      && isPB(right)
+\end{lstlisting}
+
+The number of nodes at level~\( n \) of a perfectly balanced binary~tree, where \( n \) increases from zero at the root, is \( 2^{n} \).
+Thus, the total number of non-empty nodes in a perfectly balanced binary~tree of height \( H \) is given by
+\begin{equation*}
+  \sum_{n=0}^{H-1} 2^{n} = 2^{H} - 1
+\end{equation*}
+
+Formulae relating the size and height of a perfectly balanced binary~tree can be defined as follows.
+\begin{lstlisting}[mathescape=true]
+#nodes(t) = 2^height(t) - 1
+height(t) = log(#nodes(t) + 1)
+\end{lstlisting}
+
+The height of a balanced binary~tree is significantly smaller than its size.
+Thus, a large balanced, or nearly balanced, binary~tree has a small height.
+This property can be exploited in order to organise data in such a way that elements can be found, inserted and deleted quickly.
+This relies on the tree being sorted.
+
+\subsection{Binary Search Tree (BST)}
+
+\subsubsection{Sorted Tree}
+
+A tree is sorted if
+\begin{itemize}
+  \item the value of each node in the left subtree is less than the value of the root,
+  \item the value of each node in the right subtree is greater than the value of the root, and
+  \item the left and right subtrees are themselves sorted.
+\end{itemize}
+It follows that a sorted tree has no repetitions, although some implementations do allow repetitions.
+
+A \emph{binary~search tree} (BST) is simply a sorted binary~tree.
+It is not necessarily balanced.
+Formulae to assert that a binary~tree is sorted can be defined as follows.
+\begin{lstlisting}[mathescape=true]
+isBST($ \square $) = true
+isBST(Fork(x, left, right))
+    = smaller(left, x) && bigger(right, x)
+      && isBST(left) && isBST(right)
+
+smaller($ \square $, x) = true
+smaller(Fork(y, left, right), x)
+    = (y < x) && smaller(left, x) && smaller(right, x)
+
+bigger($ \square $, x) = true
+bigger(Fork(y, left, right), x)
+    = (y > x) && bigger(left, x) && bigger(right, x)
+\end{lstlisting}
+
+\subsubsection{Search}
+
+The search specification for a BST is as follows.
+Given an BST \( t \), and a search value \( x \), find an integer \( i \) such that
+\begin{itemize}
+  \item if there is no index \( j \) such that the \( j \)th element of \( t \) is equal to \( x \), then \( i \) is \( -1 \),
+  \item otherwise, the \( i \)th element of \( t \) is equal to \( x \).
+\end{itemize}
+
+The corresponding search algorithm is as follows.
+\begin{enumerate}
+  \item Starting at the root node, and
+  \item repeating until an empty tree is reached,
+  \begin{itemize}
+    \item if the value of the current node is less than the search value, move to the root node of the left subtree,
+    \item otherwise, if the value of the current node is greater than the search value, move to the root node of the right subtree,
+    \item otherwise, the value of the current node must be equal to the search value; the search value has been found.
+    Return the current position.
+  \end{itemize}
+  \item Return \( -1 \).
+\end{enumerate}
+
+The efficiency of this algorithm is determined by the number of comparisons it performs.
+After each comparison, the search moves to the next subtree.
+Thus, the maximum number of comparisons is the height of the tree.
+If the tree is balanced, or nearly balanced, both the average and worst-case time complexities are \( \bigo{\log n} \).
+If the tree becomes highly imbalanced, the worst-case time complexity increases to \( \bigo{n} \).
+
+Formulae to check whether an element \texttt{x} is in a BST \texttt{t} can be defined as follows.
+\begin{lstlisting}[mathescape=true]
+isIn(x, t) = $ \begin{cases}
+  \texttt{true} & \text{// if x occurs in t} \\
+  \texttt{false} & \text{// otherwise}
+\end{cases} $
+
+isIn(x, $ \square $) = false
+isIn(x, Fork(y, left, right))
+    = (x == y)
+      || ((x < y) && isIn(x, left))
+      || ((x > y) && isIn(x, right))
+\end{lstlisting}
+
+\subsubsection{Insertion}
+
+The insertion algorithm proceeds in a similar fashion to the search algorithm.
+Thus, it has the same time complexities.
+Instead of returning a position, the new element is inserted in the correct position.
+The action to perform if the insertion element already exists in the tree is determined by the precise problem specification.
+The resulting tree is a sorted binary tree (a BST).
+After many items are inserted into a BST, it is likely to be imbalanced.
+To maintain the efficiency of the BST, efficient balancing algorithms must be considered.
+
+Assuming that the tree is to be left unchanged if it already contains the element to be inserted, insertion formulae can be defined as follows.
+\begin{lstlisting}[mathescape=true]
+insert(x, $ \square $) = Fork(x, $ \square $, $ \square $)
+insert(x, Fork(y, left, right))
+    = $ \begin{cases}
+      \text{Fork(x, left, right)} & \text{// if x == y} \\
+      \text{Fork(y, insert(x, left), right)} & \text{// if x < y} \\
+      \text{Fork(y, left, insert(x, right))} & \text{// if x > y}
+    \end{cases} $
+\end{lstlisting}
+
+\subsubsection{Deletion}
+
+There are several cases to consider for the deletion algorithm.
+\begin{itemize}
+  \item If the element to delete is a leaf node (with two empty subtrees), the node is simply replaced with an empty subtree.
+  The node is found in \( \bigo{\log n} \) time, and deleted in one step.
+  The overall time complexity is \( \bigo{\log n} \).
+  \item If the element to delete is an internal node with only one empty subtree, the node is replaced by the non-empty subtree.
+  This also has \( \bigo{\log n} \) time complexity.
+  \item If the element to delete is an internal node with no empty subtrees, the node must be replaced in a manner than maintains the order of the tree.
+  One option is to replace the target node with the left-most leaf~node of the right subtree (the leaf node is removed from the subtree).
+  Alternatively, the target node could be replaced with the right-most leaf~node of the left subtree.
+  This also has \( \bigo{\log n} \) time complexity.
+\end{itemize}
+
+The deletion algorithm has the same time complexities as the search and insertion algorithms.
+After many elements are removed from a BST, it is likely to be imbalanced.
+
+Assuming that the tree is to be left unchanged if it already contains the element to be deleted, deletion formulae can be defined as follows.
+\begin{lstlisting}[mathescape=true]
+delete(x, $ \square $) = $ \square $
+
+delete(x, Fork(y, left, right))
+    = $ \begin{cases}
+      \text{Fork(y, delete(x, left), right)} & \text{// if x < y} \\
+      \text{Fork(y, left, delete(x, right))} & \text{// if x > y}
+    \end{cases} $
+
+delete(x, Fork(x, left, right))
+    = Fork(smallest(right), left, delete(smallest(right), right))
+    // if both left and right are non-empty
+
+delete(x, Fork(x, $ \square $, right)) = right
+delete(x, Fork(x, left, $ \square $)) = left
+delete(x, Fork(x, $ \square $, $ \square $)) = $ \square $
+\end{lstlisting}
+
+\subsubsection{Summary}
+
+If the BST is balanced, or nearly balanced, the search, insertion and deletion algorithms all have a time complexity of \( \bigo{\log n} \) in both the worst case and on average.
+If the BST is highly imbalanced, the algorithms have a worst-case time complexity of \( \bigo{n} \).
+
+After many insertions or deletions, a BST is likely to be imbalanced.
+To maintain the efficiency of the BST, efficient balancing algorithms must be considered.
