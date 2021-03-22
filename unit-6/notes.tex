@@ -111,9 +111,18 @@ int binarySearch(int[] a, int x) {
 
 Since the search space is halved on each iteration, the number of iterations in the worst-case scenario (when \( x \) is not found by the algorithm) is \( \log_{2} n \).
 Thus, its worst-case run-time complexity is \( \bigo{\log n} \) --- logarithmic complexity.
+Its average run-time complexity is also \( \bigo{\log n} \).
 This means that the run time is logarithmically proportional to the length of the array.
 Binary~search is quicker and more efficient than linear~search, but it is limited in that the array must be sorted before the algorithm can be applied.
 
 Since binary~search is more complex than linear~search, preconditions, \emph{invariants} and postconditions are used to prove its correctness.
 An invariant is a property of an object that remains unchanged after operations of a certain type are applied to the object.
+Usually, this is a condition that should hold at the beginning of each iteration of a loop.
 Assertions can be used to check these conditions when testing the algorithm.
+
+\begin{description}
+  \item[assertion] a condition that is \emph{expected} to hold at a point in an algorithm
+  \item[precondition] a condition that is \emph{assumed} to hold at the beginning of an algorithm
+  \item[postcondition] a condition that is \emph{guaranteed} to hold at the end of an algorithm
+  \item[invariant] a condition that \emph{should} hold at the beginning of each iteration of a loop
+\end{description}
