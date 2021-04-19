@@ -1,0 +1,180 @@
+\subsection{AVL Tree Concepts}
+
+\subsubsection{Height of a Node}
+
+The height of a node is the length of the longest path from the node to a leaf node.
+
+\subsubsection{Balance of a Node}
+
+The balance of a node is the difference between the height of its left subtree and the height of its right subtree.
+
+\begin{lstlisting}[mathescape=true]
+balance($ \square $) = 0
+balance(Fork(x, left, right)) = height(left) - height(right)
+\end{lstlisting}
+
+\subsubsection{Perfectly Balanced Binary Tree}
+
+A binary tree is perfectly balanced if the left and right subtrees of any node have the same height.
+In other words, the balance of each node is zero.
+The height \( h \) and size \( n \) of a perfectly balanced tree are related by the following equations.
+\begin{gather*}
+  n = 2^{h} - 1 \\
+  h = \log_{2} \left( n + 1 \right)
+\end{gather*}
+
+The number of nodes grows exponentially as a function of the height.
+The height grows logarithmically as a function of the number of nodes.
+Even for a small height, there is a large number of nodes.
+
+\subsubsection{AVL Balance}
+
+After many insertions or deletions, a binary search tree is likely to grow imbalanced.
+\emph{AVL~trees} -- named after Adelson-Velski and Landis -- solve this problem by assuming additional conditions in order to keep the trees balanced.
+An AVL~tree is a binary search tree in which the balance at each node is \( -1 \), \( 0 \) or \( 1 \).
+It is difficult to maintain perfectly balanced trees.
+AVL~balance is simpler to maintain and is sufficient for fast algorithms.
+
+The size \( n \) of an AVL tree of height \( h \) has an upper bound of the size of a perfectly balanced tree of the same height, and a lower bound of the size of a \emph{Fibonacci~tree} of the same height.
+\begin{equation*}
+  F\!\left( h + 2 \right) - 1 \leq n \leq 2^{h} - 1
+\end{equation*}
+
+The \emph{Fibonacci~sequence} is defined as follows.
+\begin{gather*}
+  F\!\left( 0 \right) = 0 \\
+  F\!\left( 1 \right) = 1 \\
+  F\!\left( k + 2 \right) = F\!\left( k \right) + F\!\left( k + 1 \right)
+\end{gather*}
+
+Fibonacci numbers can also be calculated using \emph{Binet's formula}.
+\begin{equation*}
+  F\!\left( k \right) = \frac{\left( \frac{\sqrt{5} + 1}{2} \right)^{k} - \left( \frac{\sqrt{5} - 1}{2} \right)^{k}}{\sqrt{5}} = \bigo{{1.61\ldots}^{k}}
+\end{equation*}
+
+Thus, the size \( n \) of an AVL tree of height \( h \) lies in the range
+\begin{equation*}
+  \bigo{{1.61\ldots}^{h}} \leq n \leq \bigo{2^{h}}
+\end{equation*}
+
+This implies that the height \( h \) of an AVL tree of size \( n \) is of the order of the logarithm of \( n \).
+\begin{equation*}
+  h = \bigo{\log n}
+\end{equation*}
+
+\subsection{Algorithms}
+
+The invariant for AVL tree operations is that the balance of each node is \( -1 \), \( 0 \) or \( 1 \).
+If this invariant is broken within a loop, it is fixed by rebalancing the tree before the end of the iteration.
+
+The search algorithm for an AVL tree is the same as that for a binary search tree.
+Insertion and deletion are the same as those for a binary search tree with the addition of a rebalancing algorithm.
+
+\begin{table}[!htp]
+  \centering
+  \caption*{Time complexities of algorithms on binary search trees and AVL trees.}
+  \begin{tabular}{lcccc}
+    \toprule
+    Algorithm & \multicolumn{2}{c}{Binary search tree} & \multicolumn{2}{c}{AVL tree} \\
+    \cmidrule(l{0.25em}r{0.25em}){2-3} \cmidrule(l{0.25em}r{0.25em}){4-5}
+    & Average & Worst case & Average & Worst case \\
+    \midrule
+    Search & \( \bigo{\log n} \) & \( \bigo{n} \) & \( \bigo{\log n} \) & \( \bigo{\log n} \) \\
+    Insert & \( \bigo{\log n} \) & \( \bigo{n} \) & \( \bigo{\log n} \) & \( \bigo{\log n} \) \\
+    Delete & \( \bigo{\log n} \) & \( \bigo{n} \) & \( \bigo{\log n} \) & \( \bigo{\log n} \) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The space complexity is \( \bigo{n} \) for both binary search trees and AVL trees, since both must maintain all of their nodes.
+
+\subsection{Rebalancing an AVL Tree}
+
+If the insertion or deletion of a single element from an AVL tree causes it to lose balance, the tree could exist in one of four possible states of imbalance.
+These states can be classified as follows, where \( x \) is the deepest node where an imbalance occurs following an insertion into, or deletion from, subtree~\( z \).
+
+\begin{figure}[!htp]
+  \centering
+  \begin{tabular}{ccc}
+    \begin{tabular}{c}
+      \begin{forest}
+        [x [y [z [A] [B]] [C]] [D]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [y [z [A] [B]] [x [C] [D]]]
+      \end{forest}
+    \end{tabular} \\
+  \end{tabular}
+  \caption*{A tree in state LL is rebalanced via right rotation at \( x \).}
+\end{figure}
+
+\begin{figure}[!htp]
+  \centering
+  \begin{tabular}{ccc}
+    \begin{tabular}{c}
+      \begin{forest}
+        [x [A] [y [B] [z [C] [D]]]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [y [x [A] [B]] [z [C] [D]]]
+      \end{forest}
+    \end{tabular} \\
+  \end{tabular}
+  \caption*{A tree in state RR is rebalanced via left rotation at \( x \).}
+\end{figure}
+
+\begin{figure}[!htp]
+  \centering
+  \begin{tabular}{ccccc}
+    \begin{tabular}{c}
+      \begin{forest}
+        [x [y [A] [z [B] [C]]] [D]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [x [z [y [A] [B]] [C]] [D]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [z [y [A] [B]] [x[C] [D]]]
+      \end{forest}
+    \end{tabular} \\
+  \end{tabular}
+  \caption*{A tree in state LR is rebalanced via a left rotation at \( y \) and a right rotation at \( x \).}
+\end{figure}
+
+\begin{figure}[!htp]
+  \centering
+  \begin{tabular}{ccccc}
+    \begin{tabular}{c}
+      \begin{forest}
+        [x [A] [y [z [B] [C]] [D]]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [x [A] [z [B] [y [C] [D]]]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [z [x [A] [B]] [y [C] [D]]]
+      \end{forest}
+    \end{tabular} \\
+  \end{tabular}
+  \caption*{A tree in state RL is rebalanced via a right rotation at \( y \) and a left rotation at \( x \).}
+\end{figure}
+
+Rebalancing is completed by continuing to climb the tree, rebalancing subtrees if necessary, until the root is reached.
