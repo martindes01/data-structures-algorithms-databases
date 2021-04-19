@@ -67,16 +67,16 @@ This implies that the height \( h \) of an AVL tree of size \( n \) is of the or
 The invariant for AVL tree operations is that the balance of each node is \( -1 \), \( 0 \) or \( 1 \).
 If this invariant is broken within a loop, it is fixed by rebalancing the tree before the end of the iteration.
 
-The search algorithm for an AVL tree is the same as for a binary search tree.
-Insertion and deletion are the same as for a binary search tree with the addition of a rebalancing algorithm.
+The search algorithm for an AVL tree is the same as that for a binary search tree.
+Insertion and deletion are the same as those for a binary search tree with the addition of a rebalancing algorithm.
 
-\begin{table}[htp]
+\begin{table}[!htp]
   \centering
   \caption*{Time complexities of algorithms on binary search trees and AVL trees.}
-  \begin{tabular}{lllll}
+  \begin{tabular}{lcccc}
     \toprule
-    Algorithm & \multicolumn{2}{l}{Binary search tree} & \multicolumn{2}{l}{AVL tree} \\
-    \cmidrule{2-3} \cmidrule{4-5}
+    Algorithm & \multicolumn{2}{c}{Binary search tree} & \multicolumn{2}{c}{AVL tree} \\
+    \cmidrule(l{0.25em}r{0.25em}){2-3} \cmidrule(l{0.25em}r{0.25em}){4-5}
     & Average & Worst case & Average & Worst case \\
     \midrule
     Search & \( \bigo{\log n} \) & \( \bigo{n} \) & \( \bigo{\log n} \) & \( \bigo{\log n} \) \\
@@ -93,20 +93,88 @@ The space complexity is \( \bigo{n} \) for both binary search trees and AVL tree
 If the insertion or deletion of a single element from an AVL tree causes it to lose balance, the tree could exist in one of four possible states of imbalance.
 These states can be classified as follows, where \( x \) is the deepest node where an imbalance occurs following an insertion into, or deletion from, subtree~\( z \).
 
-% labelled trees
+\begin{figure}[!htp]
+  \centering
+  \begin{tabular}{ccc}
+    \begin{tabular}{c}
+      \begin{forest}
+        [x [y [z [A] [B]] [C]] [D]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [y [z [A] [B]] [x [C] [D]]]
+      \end{forest}
+    \end{tabular} \\
+  \end{tabular}
+  \caption*{A tree in state LL is rebalanced via right rotation at \( x \).}
+\end{figure}
 
-A tree in state LL is rebalanced via right rotation.
+\begin{figure}[!htp]
+  \centering
+  \begin{tabular}{ccc}
+    \begin{tabular}{c}
+      \begin{forest}
+        [x [A] [y [B] [z [C] [D]]]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [y [x [A] [B]] [z [C] [D]]]
+      \end{forest}
+    \end{tabular} \\
+  \end{tabular}
+  \caption*{A tree in state RR is rebalanced via left rotation at \( x \).}
+\end{figure}
 
-% diagram
+\begin{figure}[!htp]
+  \centering
+  \begin{tabular}{ccccc}
+    \begin{tabular}{c}
+      \begin{forest}
+        [x [y [A] [z [B] [C]]] [D]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [x [z [y [A] [B]] [C]] [D]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [z [y [A] [B]] [x[C] [D]]]
+      \end{forest}
+    \end{tabular} \\
+  \end{tabular}
+  \caption*{A tree in state LR is rebalanced via a left rotation at \( y \) and a right rotation at \( x \).}
+\end{figure}
 
-A tree in state RR is rebalanced via left rotation.
-
-% diagram
-
-A tree in state LR is rebalanced via a left rotation at \( y \) and a right rotation at \( x \).
-
-% diagram
-
-A tree in state RL is rebalanced via a right rotation at \( y \) and a left rotation at \( x \).
+\begin{figure}[!htp]
+  \centering
+  \begin{tabular}{ccccc}
+    \begin{tabular}{c}
+      \begin{forest}
+        [x [A] [y [z [B] [C]] [D]]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [x [A] [z [B] [y [C] [D]]]]
+      \end{forest}
+    \end{tabular} & \begin{tabular}{c}
+      \( \longrightarrow \) \\
+    \end{tabular} & \begin{tabular}{c}
+      \begin{forest}
+        [z [x [A] [B]] [y [C] [D]]]
+      \end{forest}
+    \end{tabular} \\
+  \end{tabular}
+  \caption*{A tree in state RL is rebalanced via a right rotation at \( y \) and a left rotation at \( x \).}
+\end{figure}
 
 Rebalancing is completed by continuing to climb the tree, rebalancing subtrees if necessary, until the root is reached.
