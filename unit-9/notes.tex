@@ -1,0 +1,128 @@
+\subsection{Graph Representations}
+
+\subsubsection{Graphs}
+
+A \emph{graph} comprises a finite set of vertices and edges between them.
+A graph may be \emph{weighted} or \emph{unweighted}.
+Each edge of a weighted graph has a value known as a \emph{weight} associated to it.
+A graph may also be \emph{directed} or \emph{undirected}.
+Each edge of a directed graph may only be traversed in one direction.
+An edge between two vertices \( u \) and~\( v \) in an undirected graph can be interpreted as a pair of directed edges from \( u \) to~\( v \), and from \( v \) to~\( u \).
+
+\subsubsection{Adjacency Matrix}
+
+A graph of \( n \) vertices can be represented by an \( n \times n \) \emph{adjacency~matrix} \( \mathbf{G} \).
+For an unweighted graph, each element \( G_{u,v} \) is one if there is an edge from vertex~\( u \) to~\( v \), or zero otherwise.
+For a weighted graph, each element \( G_{u,v} \) is the weight of the edge from \( u \) to~\( v \), positive infinity if there is no such edge, or zero if \( u \) and~\( v \) are the same vertex.
+A graph is undirected if \( G_{u,v} = G_{v,u} \) for all vertices \( u \) and~\( v \).
+
+\subsubsection{Adjacency Lists}
+
+A graph of \( n \) vertices can also be represented by an array \( \boldsymbol{N} \) of one \emph{adjacency~list} for each vertex (\( n \) lists in total), where each adjacency list \( N_{u} \) is a \emph{linked~list} of the neighbours of vertex~\( u \).
+For a weighted graph, each element of the adjacency list \( N_{u} \) is a tuple of a neighbour \( v \) of \( u \) and the weight of the edge from \( u \) to~\( v \).
+A vertex~\( v \) is a neighbour of \( u \) if and only if there exists an edge from \( u \) to~\( v \).
+
+\subsubsection{Comparison}
+
+For a graph of \( n \) vertices and~\( m \) edges, an adjacency matrix comprises \( n \) arrays of size \( n \), and has, therefore, a space complexity \( \bigo{n^{2}} \).
+The equivalent adjacency list representation comprises \( n \) linked lists that store \( m \) edges in total, and has, therefore, a space complexity of \( \bigo{n + m} \).
+
+Checking for the existence of an edge from \( u \) to~\( v \) in an adjacency matrix involves simply reading the value of \( G_{u,v} \) in \( \bigo{1} \)~time.
+Checking for the existence of the edge using adjacency lists involves checking whether the vertex~\( v \) exists in the list \( N_{u} \).
+This has linear time complexity in the length of the list \( N_{u} \), which in the worst case is \( \bigo{m} \).
+
+Traversing all neighbours of \( u \) in an adjacency matrix involves reading \( G_{u,v} \) for every vertex~\( v \) in \( \bigo{n} \)~time.
+Traversing all neighbours of \( u \) using adjacency lists involves reading only the vertices of the list \( \boldsymbol{N}_{u} \), which in the worst case is \( \bigo{m} \).
+Using adjacency lists, only actual neighbours of \( u \) are read.
+This is best when the graph is \emph{sparse} (having relatively few edges) rather than \emph{dense}.
+
+\subsection{Shortest Paths}
+
+\subsubsection{Paths}
+
+A \emph{path} from \( u \) to~\( z \) is the sequence of edges between some vertices \( \left( u, v, \ldots, z \right) \) that connect \( u \) to~\( z \).
+A path is a \emph{shortest~path} if the sum of the weights of its edges is minimal.
+
+\subsubsection{Dijkstra's Algorithm}
+
+\emph{Dijkstra's algorithm} is an algorithm used to find a shortest path between an origin vertex \( u \) and a destination vertex \( z \) in a graph.
+For each vertex~\( v \) in the graph, the algorithm keeps track of the shortest distance~\( d_{v} \) from \( u \) to~\( v \) found so far (initially zero for \( u \), positive infinity otherwise), the predecessor vertex \( p_{v} \) of \( v \) on the path from \( u \) (initially \( v \) itself by convention), and the completion status \( f_{v} \) of the computation of \( d_{v} \) (initially true for \( u \), false otherwise).
+
+The algorithm only works for graphs whose edges have non-negative weights.
+There exist alternative algorithms that can handle negative weights but are not as efficient.
+
+The algorithm proceeds as follows.
+\begin{enumerate}
+  \item Set the current vertex~\( v \) to the origin \( u \).
+  \item Set the completion status \( f_{u} \) of \( u \) to true (mark \( u \) as finished).
+  \item Repeating until the destination \( z \) is marked as finished,
+  \begin{enumerate}
+    \item for each neighbour \( w \) of \( v \) such that the sum of \( d_{v} \) and the weight of the edge from \( v \) to~\( w \) is less than \( d_{w} \), set the distance~\( d_{w} \) to that sum and the predecessor~\( p_{w} \) to~\( v \), and
+    \item set the current vertex \( v \) to an unfinished vertex (if available) with the smallest distance~\( d_{v} \).
+  \end{enumerate}
+\end{enumerate}
+
+Initially, \( d_{v} \) is infinity, \( p_{v} = v \) and \( f_{v} \) is false for all vertices \( v \).
+The arrays \( \boldsymbol{d} \) and~\( \boldsymbol{f} \) obey the following invariants.
+\begin{itemize}
+  \item The distance~\( d_{v} \) is the length of the shortest path from \( u \) to~\( v \) passing through only the finished vertices (those for which \( f_{v} \) is true).
+  \item If \( v \) is marked as finished (\( f_{v} \) is true), the distance~\( d_{v} \) is the actual length of the shortest path from \( u \) to~\( v \).
+\end{itemize}
+The weight of the edge from \( u \) to~\( v \) is obtained from the adjacency matrix or adjacency lists that represent the graph.
+When the algorithm is finished, the shortest path from \( u \) to~\( z \) is obtained in reverse order from the predecessor array, starting from \( p_{z} \).
+Thus, the shortest path is the sequence of edges between the vertices \( \left( u, \ldots, p_{p_{z}}, p_{z}, z \right) \).
+
+The critical steps of the algorithm are to find the next unfinished vertex with the smallest distance from the origin, and to update every neighbour of the current vertex.
+Using an adjacency matrix, both of these steps can be completed in \( \bigo{n} \)~time.
+Since the steps are repeated up~to \( n \)~times, the overall time complexity of the algorithm when representing the graph using an adjacency matrix is \( \bigo{n^{2}} \).
+
+When the graph is represented using adjacency lists, the algorithm updates all the neighbours of a different vertex on each iteration.
+Over all the iterations, a total of \( m \) vertices are updated.
+Thus, the update steps contribute a time complexity of \( \bigo{m} \).
+The search and update steps can be made more efficient using a \emph{minimum~priority queue} in which the priority of a vertex~\( v \) is the distance~\( d_{v} \).
+Using a \emph{binary~heap} implementation for the binary queue, the overall time complexity of the algorithm using adjacency lists is \( \bigo{\left( n + m \right) \log n} \).
+Using a \emph{Fibonacci~heap} implementation, the time complexity is \( \bigo{\left( n \log n \right) + m} \).
+
+If the graph is dense (the number of edges \( m \) is approximately \( n^{2} \)), using adjacency lists with a binary heap has time complexity \( \bigo{n^{2} \log n} \), which is slower than using an adjacency matrix.
+Using adjacency lists with a Fibonacci heap, however, has a better time complexity of \( \bigo{n^{2}} \) for a dense graph.
+If the graph is sparse, using adjacency lists with either type of heap is faster than using an adjacency matrix.
+
+\subsection{Minimal Spanning Trees}
+
+\subsubsection{Spanning Trees}
+
+Considering only undirected and connected graphs, a \emph{spanning~tree} is a minimal selection of edges that connects all vertices.
+The selection of edges is minimal if it does not form a cycle in the graph.
+A \emph{minimum spanning~tree} is a spanning tree for which the sum of the weights of its edges is minimal.
+
+\subsubsection{Jarn\'{i}k-Prim Algorithm}
+
+The \emph{Jarn\'{i}k-Prim algorithm} forms a minimum spanning tree of a graph by iteratively extending the tree with an edge that connects a vertex that is not yet part of the tree and has a minimal weight.
+For each vertex~\( v \) in the graph, the algorithm keeps track of the current distance~\( d_{v} \) of \( v \) from the tree (initially zero for the initial vertex, positive infinity otherwise), the predecessor vertex \( p_{v} \) by which \( v \) is directly connected to the tree (initially \( v \) itself by convention), and the connection status \( f_{v} \) that indicates whether \( v \) has been added to the tree (initially true for the initial vertex, false otherwise).
+
+Unlike Dijkstra's algorithm, the Jarn\'{i}k-Prim algorithm works for graphs whose edges have negative weights.
+
+The algorithm proceeds as follows.
+\begin{enumerate}
+  \item Set the current vertex~\( v \) to any initial vertex \( u \).
+  \item Set the distance~\( d_{u} \) of \( u \) to zero.
+  \item Repeating while there is still at least one node marked as unconnected,
+  \begin{enumerate}
+    \item set the connection status \( f_{v} \) of \( v \) to true (mark \( v \) as connected), and
+    \item for each neighbour \( w \) of \( v \) such that the weight of the edge from \( v \) to~\( w \) is less than \( d_{w} \), set the distance~\( d_{w} \) to that weight and the predecessor~\( p_{w} \) to~\( v \), and
+    \item set the current vertex \( v \) to an unconnected vertex (if available) with the smallest distance~\( d_{v} \).
+  \end{enumerate}
+\end{enumerate}
+
+The arrays \( \boldsymbol{d} \), \( \boldsymbol{p} \) and~\( \boldsymbol{f} \) obey the following invariants.
+\begin{itemize}
+  \item All vertices marked as connected are included in the tree.
+  \item For a vertex~\( v \) that is not connected, the distance~\( d_{v} \) is the smallest weight of an edge that can connect \( v \) to the tree.
+  \item For any vertex~\( v \), the predecessor~\( p_{v} \) is the vertex of the tree such that the edge from \( p_{v} \) to~\( v \) has weight \( d_{v} \).
+\end{itemize}
+When the algorithm is finished, the minimum spanning tree is obtained from the predecessor array as the collection of edges from \( p_{v} \) to~\( v \) for every vertex~\( v \) other than the initial vertex \( u \).
+
+The time complexity of the Jarn\'{i}k-Prim algorithm is the same as that of Dijkstra's algorithm.
+Using an adjacency matrix, it is \( \bigo{n^{2}} \).
+Using adjacency lists with a binary heap, it is \( \bigo{\left( n + m \right) \log n)} \).
+Using adjacency lists with a Fibonacci heap, it is \( \bigo{\left( n \log n \right) + m} \).
