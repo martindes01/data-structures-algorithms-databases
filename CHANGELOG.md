@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Notes for Unit 10: Hash Tables.
+
 ### Changed
 
 - Increase precision of golden ratio.
