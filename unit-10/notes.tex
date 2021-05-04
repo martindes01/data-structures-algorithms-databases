@@ -1,0 +1,122 @@
+\subsection{Motivation and Concepts}
+
+Arrays are indexed only by integers.
+The motivation behind \emph{hash~tables} is to allow a structure similar to an array to be indexed by non-integer keys.
+A \emph{hash~function} computes an integer array index for a given key.
+This allows a value to be indexed in an array using a non-integer key as follows.
+\begin{lstlisting}[mathescape=true]
+array[hash(key)] = value
+\end{lstlisting}
+
+If the hash function maps each unique key to a unique index, this insertion method has a time complexity of \( \bigo{1} \).
+This is better than \( \bigo{n} \) for a sorted array and \( \bigo{\log n} \) for an AVL tree, but is not space efficient for sparse data.
+In this case, space efficiency has been traded for time efficiency.
+
+Space efficiency can be improved by reducing the size of the array so that its length is exactly equal to the number of elements \( n \) it will store.
+The hash function is modified to produce an index in the interval \( \left[ 0, n \right] \) for a given key as follows.
+\begin{lstlisting}[mathescape=true]
+hash(key) = unique_id(key) mod n
+\end{lstlisting}
+As this function can map multiple keys to the same hash value, which is used to index an element in an array, this may introduce \emph{hash~collisions}.
+Increasing the size of the array reduces the likelihood of a collision, but does not remove it completely.
+
+In summary, a hash table comprises an array for storing values, a hash function that computes an array index for a given key, and a mechanism for dealing with collisions.
+Two types of solution to the hash collision problem are the \emph{sticking-out strategy}, in which values whose corresponding keys have the same hash value are stored in a linked list, and the \emph{tucked-in strategy}, in which a value is stored in one of a number of fallback positions in the array if the position indicated by the hash value of its corresponding key is already occupied.
+As a result of these mechanisms, it is possible for multiple values --- each corresponding to a different key --- to be stored under the same index, or for a value to be stored under an index that differs from the hash value of its corresponding key.
+Thus, each value is stored in a tuple with its corresponding key for identification.
+
+\subsection{Direct Chaining}
+
+\emph{Direct~chaining} is a sticking-out strategy for dealing with hash collisions.
+Initially, each position of the array contains a reference to an empty list.
+The insertion algorithm searches for a given key in the list corresponding to its hash value.
+If it is not present, the key and corresponding value are stored as a new node at the beginning of the list.
+
+The time complexity of insertion, deletion and lookup depends on the quality of the hash function.
+In the worst case, the hash function maps all \( n \) keys to the same index, resulting in a time complexity of \( \bigo{n} \) for all three operations.
+This also wastes space in the array.
+
+The \emph{load~factor} of a hash table is average number of entries stored at a location in the array.
+This is the ratio of the total number \( n \) of stored entries to the size \( T \) of the hash table.
+A good hash function maps keys to indices uniformly --- the expected number of entries in the list referenced by an index computed by the hash function is equal to the load factor.
+In this case, the average number of entries in each list is \( \frac{n}{T} \).
+
+An unsuccessful lookup occurs when a given key is not present in the table.
+To search for a key in its corresponding list, all \( \frac{n}{T} \) entries of the list must be traversed.
+
+A successful lookup occurs when a given key is present in the table.
+The expected position of a key is the middle of its corresponding list.
+To search for a key in a list, an average of \( \frac{1}{2} \left( 1 + \frac{n}{T} \right) \) entries must be traversed.
+
+Applying a constant maximum load factor \( \lambda \) such that \( \frac{n}{T} \leq \lambda \), an unsuccessful lookup requires an average of \( \frac{n}{T} \leq \lambda \) comparisons, and a successful lookup requires an average of \( \frac{1}{2} \left( 1 + \frac{n}{T} \right) \leq \frac{1}{2} \left( 1 + \lambda \right) \).
+Since \( \lambda \) is constant, the average time complexity for lookup using direct chaining is \( \bigo{1} \), assuming \( \lambda \) is a fixed upper bound less than one.
+The time complexities of insertion and deletion are also \( \bigo{1} \).
+Both begin by searching for the key in the table.
+For insertion, if the key is not found in its list, the key and its value are then stored at the beginning of the list.
+For deletion, if the key is found, its entry is then deleted.
+
+The disadvantages of sticking-out strategies such as direct chaining are that
+\begin{itemize}
+  \item there are typically a lot of hash collisions and, therefore, a lot of unused space, and
+  \item the allocation, maintenance and caching of linked lists can be slow.
+\end{itemize}
+These problems can be avoided by using a tucked-in strategy.
+
+\subsection{Linear Probing}
+
+\emph{Linear~probing} is a tucked-in strategy for dealing with hash collisions.
+Using this strategy, a position in the array can either be empty, store an entry, or store a marker known as a \emph{tombstone} that marks a previously deleted entry.
+
+The search algorithm searches for a given key starting from the \emph{primary position} indicated by its hash value, continuing right, skipping over all tombstones and wrapping to the beginning of the array if the end is reached.
+If an empty position is reached, the key is not in the table.
+
+The insertion algorithm searches for a given key in the table, and if it is not found and its primary position is occupied by a different key, the entry is stored in the first empty or tombstone position to its right.
+
+The deletion algorithm searches for a given key in the table until the key or an empty position is found.
+If the key is found, it is replaced with a tombstone.
+
+Using linear probing, search, insertion and deletion have a time complexity of \( \bigo{1} \).
+However, the method often results in the formation of groups of consecutive entries known as \emph{clusters}.
+\emph{Primary clusters} are formed by entries with the same hash code.
+\emph{Secondary clusters} are formed when an entry fills the gap between two clusters.
+Clusters are likely to grow larger over time, even for low load factors.
+The formation of large clusters is detrimental to performance, since the search algorithm only stops when an empty position is reached.
+
+\subsection{Double Hashing}
+
+\emph{Double~hashing} is a tucked-in strategy for dealing with hash collisions that is less likely to produce large clusters than linear probing.
+It uses a primary hash function and a secondary hash function.
+If a given key is not already stored in the table, the insertion algorithm searches for an available position starting from the position indicated by the primary hash value, stepping right by the number of positions indicated by the secondary hash value and wrapping to the beginning of the array if the end is reached.
+Thus, the entry will be inserted at a position given by the following expression for some non-negative integer \( n \).
+\begin{lstlisting}[mathescape=true]
+(hash1(key) + n * hash2(key)) mod T
+\end{lstlisting}
+Linear probing is a special case of double hashing in which the secondary hash value is always one.
+
+In order to avoid short cycles, the table size \( T \) and the secondary hash value must be coprime (they must have no common factors).
+One solution is to set the table size to a prime number.
+The preferred solution is to set the table size to a power of two (\( T = 2^{k} \)) and ensure the secondary hash function produces only odd indices.
+Using this solution, the table size is always even, and the step size is always odd.
+Thus, in a complete cycle, each position is visited exactly once.
+
+A hash table is \emph{full} if the load factor \( \frac{n}{T} \) exceeds the maximum load factor \( \lambda \).
+\begin{equation*}
+  \frac{n}{T} > \lambda
+\end{equation*}
+If the table becomes full after an insertion, a new table of twice the original size is allocated, and all the elements are inserted into it.
+This process is known as \emph{rehashing}.
+As a consequence, the insertion algorithm has a worst-case time complexity of \( \bigo{n} \) when rehashing, and an amortised time complexity of \( \bigo{1} \).
+
+\subsection{Summary}
+
+A hash table comprises an array, a primary hash function and, in the case of double hashing, a secondary hash function.
+All of its operations have an amortised time complexity of \( \bigo{1} \) if
+\begin{itemize}
+  \item the hash functions compute indices uniformly,
+  \item the table size is \( T = 2^{k} \) for some positive integer \( k \) and the secondary hash function produces only odd indices, and
+  \item the table is rehashed when it becomes full.
+\end{itemize}
+
+An AVL tree requires its keys to be comparable and its operations have a time complexity of \( \bigo{\log n} \) in the best, worst and average cases.
+In comparison, a hash table does not require its keys to be comparable, but does require good hash functions, and requires more space for a low load factor.
+Its operations have an amortised time complexity of \( \bigo{1} \).
