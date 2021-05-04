@@ -49,12 +49,12 @@ The \emph{Fibonacci~sequence} is defined as follows.
 
 Fibonacci numbers can also be calculated using \emph{Binet's formula}.
 \begin{equation*}
-  F\!\left( k \right) = \frac{\left( \frac{\sqrt{5} + 1}{2} \right)^{k} - \left( \frac{\sqrt{5} - 1}{2} \right)^{k}}{\sqrt{5}} = \bigo{{1.61\ldots}^{k}}
+  F\!\left( k \right) = \frac{\left( \frac{1 + \sqrt{5}}{2} \right)^{k} - \left( \frac{1 - \sqrt{5}}{2} \right)^{k}}{\sqrt{5}} = \bigo{{1.618\ldots}^{k}}
 \end{equation*}
 
 Thus, the size \( n \) of an AVL tree of height \( h \) lies in the range
 \begin{equation*}
-  \bigo{{1.61\ldots}^{h}} \leq n \leq \bigo{2^{h}}
+  \bigo{{1.618\ldots}^{h}} \leq n \leq \bigo{2^{h}}
 \end{equation*}
 
 This implies that the height \( h \) of an AVL tree of size \( n \) is of the order of the logarithm of \( n \).
